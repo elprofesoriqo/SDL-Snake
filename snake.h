@@ -10,7 +10,8 @@ private:
     Direction nextDirection;
     bool isDead;
     int score;
-
+    Direction getValidTurnDirection(const Point& newHead) const;
+    bool isValidMove(const Point& newHead) const;
 public:
     Snake();
     void reset();
