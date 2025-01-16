@@ -73,25 +73,23 @@ int main(int argc, char** argv) {
                 case SDL_QUIT:
                     quit = true;
                     break;
-                case SDL_KEYDOWN:
-                    switch (event.key.keysym.sym) {
-                        case SDLK_ESCAPE:
-                            if (game.getState() == PLAYING) {
-                                game.setState(GAME_OVER);
-                            } else {
-                                quit = true;
-                            }
-                            break;
-                        case SDLK_RETURN:
-                            if (game.getState() == MENU) {
-                                game.reset();
-                            }
-                            break;
-                        case SDLK_n:
-                            if (game.getState() != MENU) {
-                                game.reset();
-                            }
-                            break;
+case SDL_KEYDOWN:
+    switch (event.key.keysym.sym) {
+        case SDLK_ESCAPE:
+            quit = true;  // Bezpośrednie wyjście z gry
+            break;
+        case SDLK_RETURN:
+            if (game.getState() == MENU) {
+                game.reset();
+                game.setState(PLAYING);
+            }
+            break;
+        case SDLK_n:
+            if (game.getState() == GAME_OVER) {
+                game.reset();
+                game.setState(PLAYING);
+            }
+            break;
                         case SDLK_UP:
                         case SDLK_DOWN:
                         case SDLK_LEFT:

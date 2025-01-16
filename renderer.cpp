@@ -23,19 +23,18 @@ void Renderer::DrawString(SDL_Surface* screen, int x, int y, const char* text, S
         text++;
     }
 }
-
 void Renderer::DrawFrame(SDL_Surface* screen) {
-    Uint32 frameColor = SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF);
+    // Czarne tło
+    SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
     
-    SDL_Rect topFrame = { 0, 0, SCREEN_WIDTH, 2 };
-    SDL_Rect bottomFrame = { 0, SCREEN_HEIGHT - 2, SCREEN_WIDTH, 2 };
-    SDL_Rect leftFrame = { 0, 0, 2, SCREEN_HEIGHT };
-    SDL_Rect rightFrame = { SCREEN_WIDTH - 2, 0, 2, SCREEN_HEIGHT };
-    
-    SDL_FillRect(screen, &topFrame, frameColor);
-    SDL_FillRect(screen, &bottomFrame, frameColor);
-    SDL_FillRect(screen, &leftFrame, frameColor);
-    SDL_FillRect(screen, &rightFrame, frameColor);
+    // Białe obramowanie planszy gry
+    SDL_Rect boardArea = {
+        BOARD_OFFSET_X - 1,
+        BOARD_OFFSET_Y - 1,
+        BOARD_SIZE_X * CELL_SIZE + 2,
+        BOARD_SIZE_Y * CELL_SIZE + 2
+    };
+    SDL_FillRect(screen, &boardArea, SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF));
 }
 
 void Renderer::DrawBoard(SDL_Surface* screen, const Snake& snake) {
@@ -113,28 +112,46 @@ void Renderer::DrawInfoPanel(SDL_Surface* screen, SDL_Surface* charset, double w
     DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 140, "ESC - wyjscie", charset);
 }
 
+
 void Renderer::DrawMenu(SDL_Surface* screen, SDL_Surface* charset) {
+    // Czarne tło
+    SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
+    
     const char* title = "SNAKE GAME";
     const char* startPrompt = "Nacisnij ENTER aby rozpoczac gre";
+    const char* exitPrompt = "ESC - wyjscie";
     
+    // Białe napisy
     DrawString(screen, (SCREEN_WIDTH - strlen(title) * 8) / 2,
                SCREEN_HEIGHT / 3, title, charset);
     DrawString(screen, (SCREEN_WIDTH - strlen(startPrompt) * 8) / 2,
                SCREEN_HEIGHT / 2, startPrompt, charset);
+    DrawString(screen, (SCREEN_WIDTH - strlen(exitPrompt) * 8) / 2,
+               SCREEN_HEIGHT / 2 + 30, exitPrompt, charset);
 }
 
 void Renderer::DrawGameOver(SDL_Surface* screen, SDL_Surface* charset, const Snake& snake, double worldTime) {
-    const char* gameOverText = "GAME OVER";
+    // Czarne tło
+    SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
+    
+    const char* gameOverText = "KONIEC GRY";
     char scoreText[128];
     char timeText[128];
+    const char* restartPrompt = "N - nowa gra";
+    const char* exitPrompt = "ESC - wyjscie";
     
-    sprintf(scoreText, "Twoj wynik: %d", snake.getScore());
-    sprintf(timeText, "Czas gry: %.1f s", worldTime);
+    sprintf(scoreText, "Twoj wynik: %d punktow", snake.getScore());
+    sprintf(timeText, "Czas gry: %.1f sekund", worldTime);
     
+    // Białe napisy
     DrawString(screen, (SCREEN_WIDTH - strlen(gameOverText) * 8) / 2,
                SCREEN_HEIGHT / 3, gameOverText, charset);
     DrawString(screen, (SCREEN_WIDTH - strlen(scoreText) * 8) / 2,
                SCREEN_HEIGHT / 2, scoreText, charset);
     DrawString(screen, (SCREEN_WIDTH - strlen(timeText) * 8) / 2,
                SCREEN_HEIGHT / 2 + 20, timeText, charset);
+    DrawString(screen, (SCREEN_WIDTH - strlen(restartPrompt) * 8) / 2,
+               SCREEN_HEIGHT / 2 + 50, restartPrompt, charset);
+    DrawString(screen, (SCREEN_WIDTH - strlen(exitPrompt) * 8) / 2,
+               SCREEN_HEIGHT / 2 + 70, exitPrompt, charset);
 }

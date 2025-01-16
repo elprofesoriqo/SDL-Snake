@@ -32,22 +32,19 @@ void Game::update(double delta) {
         moveTimer += delta;
         speedUpTimer += delta;
         
-        // Przyspieszanie gry co 10 sekund
-        if (speedUpTimer >= 10.0) {
+        // Speed up every 20 seconds instead of 10
+        if (speedUpTimer >= 20.0) {
             speedUpTimer = 0;
-            moveTimer *= 0.9; // Zwiększenie prędkości o 10%
+            moveTimer *= 0.9; // Increase speed by 10%
         }
         
-        // Aktualizacja pozycji węża
-        if (moveTimer >= 0.15) { // Interwał ruchu
+        // Update snake position
+        if (moveTimer >= 0.15) {
             moveTimer = 0;
             updateGameLogic(delta);
         }
         
         food.update(delta);
-    }
-    else if (state == GAME_OVER && stateTimer >= 5.0) {
-        stateTimer = 0;
     }
 }
 
@@ -66,10 +63,15 @@ void Game::updateGameLogic(double delta) {
         food.generateNewBlueFood();
     }
     
-    if (food.isRedFoodActive() && head == food.getRedFood()) {
-        snake.addScore(20);
-        snake.grow();
-        snake.grow(); // Czerwone jedzenie daje podwójny wzrost
-        food.deactivateRedFood();
+if (food.isRedFoodActive() && head == food.getRedFood()) {
+    snake.addScore(5); // Mniej punktów za bonus
+    
+    if (food.getBonusType() == SHORTEN) {
+        snake.shrink(2); // Skróć o 2 jednostki
+    } else {
+        moveTimer *= 1.2; // Spowolnij o 20%
     }
+    
+    food.deactivateRedFood();
+}
 }

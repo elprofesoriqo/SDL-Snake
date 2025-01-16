@@ -1,6 +1,7 @@
 #pragma once
 #include "types.h"
 #include "constants.h"
+#include <algorithm>
 
 class Snake {
 private:
@@ -23,4 +24,7 @@ public:
     int getScore() const { return score; }
     void addScore(int points);
     void grow();
+    void shrink(int units);
+    
+
 };

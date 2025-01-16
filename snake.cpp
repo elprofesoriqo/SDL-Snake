@@ -20,7 +20,23 @@ void Snake::reset() {
 }
 
 void Snake::setDirection(Direction newDir) {
-    // Nie pozwól na zawracanie
+    Point head = body[0];
+    
+    // Sprawdź, czy wąż jest przy ścianie
+    bool atTopWall = head.y <= 0;
+    bool atBottomWall = head.y >= BOARD_SIZE_Y - 1;
+    bool atLeftWall = head.x <= 0;
+    bool atRightWall = head.x >= BOARD_SIZE_X - 1;
+
+    // Ignoruj próby skrętu w ścianę
+    if ((atTopWall && newDir == UP) ||
+        (atBottomWall && newDir == DOWN) ||
+        (atLeftWall && newDir == LEFT) ||
+        (atRightWall && newDir == RIGHT)) {
+        return;
+    }
+
+    // Sprawdź, czy nie zawracamy
     if ((direction == UP && newDir == DOWN) ||
         (direction == DOWN && newDir == UP) ||
         (direction == LEFT && newDir == RIGHT) ||
@@ -81,13 +97,19 @@ void Snake::grow() {
 void Snake::addScore(int points) {
     score += points;
 }
+
+void Snake::shrink(int units) {
+    length = (length - units < INITIAL_SNAKE_LENGTH) ? INITIAL_SNAKE_LENGTH : length - units;
+}
+
 bool Snake::update() {
-    // Najpierw sprawdzamy nextDirection
-    direction = nextDirection;  // Pozwalamy na zmianę kierunku
+    // Save previous direction before updating
+    Direction previousDirection = direction;
+    direction = nextDirection;
     
     Point newHead = body[0];
     
-    // Obliczamy nową pozycję głowy
+    // Calculate new position
     switch (direction) {
         case UP:    newHead.y--; break;
         case DOWN:  newHead.y++; break;
@@ -95,37 +117,41 @@ bool Snake::update() {
         case RIGHT: newHead.x++; break;
     }
     
-    // Sprawdzamy czy wyjdziemy poza planszę
-    if (newHead.x < 0 || newHead.x >= BOARD_SIZE_X ||
-        newHead.y < 0 || newHead.y >= BOARD_SIZE_Y) {
-        
-        // Wracamy do poprzedniej pozycji głowy
+    // Check for wall collision
+    bool wallCollision = (newHead.x < 0 || newHead.x >= BOARD_SIZE_X ||
+                         newHead.y < 0 || newHead.y >= BOARD_SIZE_Y);
+    
+    if (wallCollision) {
+        // Revert to previous direction and position
+        direction = previousDirection;
         newHead = body[0];
         
-        // Znajdujemy nowy kierunek przy ścianie
+        // Get valid turn direction
         Direction wallDirection = getValidTurnDirection(body[0]);
         
-        // Aktualizujemy kierunek i pozycję
-        direction = wallDirection;
-        nextDirection = wallDirection;  // Aktualizujemy też nextDirection
-        
-        // Obliczamy nową pozycję z nowym kierunkiem
-        switch (direction) {
-            case UP:    newHead.y--; break;
-            case DOWN:  newHead.y++; break;
-            case LEFT:  newHead.x--; break;
-            case RIGHT: newHead.x++; break;
+        // Only update if the wall direction is different from current direction
+        if (wallDirection != direction) {
+            direction = wallDirection;
+            nextDirection = wallDirection;
+            
+            // Recalculate position with new direction
+            switch (direction) {
+                case UP:    newHead.y--; break;
+                case DOWN:  newHead.y++; break;
+                case LEFT:  newHead.x--; break;
+                case RIGHT: newHead.x++; break;
+            }
         }
     }
     
-    // Sprawdzamy kolizję z własnym ciałem
+    // Check self collision
     for (int i = 0; i < length; i++) {
         if (newHead == body[i]) {
             return false;
         }
     }
     
-    // Przesuwamy ciało węża
+    // Update body
     for (int i = length - 1; i > 0; i--) {
         body[i] = body[i - 1];
     }
