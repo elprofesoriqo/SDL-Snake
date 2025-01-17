@@ -21,7 +21,7 @@ void Snake::reset() {
 
 void Snake::setDirection(Direction newDir) {
     Point head = body[0];
-    
+
     // Sprawdź, czy wąż jest przy ścianie
     bool atTopWall = head.y <= 0;
     bool atBottomWall = head.y >= BOARD_SIZE_Y - 1;
@@ -43,7 +43,7 @@ void Snake::setDirection(Direction newDir) {
         (direction == RIGHT && newDir == LEFT)) {
         return;
     }
-    
+
     nextDirection = newDir;
 }
 
@@ -52,13 +52,13 @@ Direction Snake::getValidTurnDirection(const Point& pos) const {
     bool atBottomWall = pos.y >= BOARD_SIZE_Y - 1;
     bool atLeftWall = pos.x <= 0;
     bool atRightWall = pos.x >= BOARD_SIZE_X - 1;
-    
+
     // Sprawdzanie rogów
     bool atTopLeftCorner = atTopWall && atLeftWall;
     bool atTopRightCorner = atTopWall && atRightWall;
     bool atBottomLeftCorner = atBottomWall && atLeftWall;
     bool atBottomRightCorner = atBottomWall && atRightWall;
-    
+
     // Obsługa rogów
     if (atTopLeftCorner) {
         return (direction == UP) ? RIGHT : DOWN;
@@ -72,16 +72,15 @@ Direction Snake::getValidTurnDirection(const Point& pos) const {
     if (atBottomRightCorner) {
         return (direction == DOWN) ? LEFT : UP;
     }
-    
+
     // Obsługa zwykłych ścian
     if (atTopWall && direction == UP) return RIGHT;
-    if (atBottomWall && direction == DOWN) return RIGHT;
+    if (atBottomWall && direction == DOWN) return LEFT;
     if (atLeftWall && direction == LEFT) return UP;
     if (atRightWall && direction == RIGHT) return DOWN;
-    
+
     return direction;
 }
-
 bool Snake::isValidMove(const Point& newHead) const {
     return (newHead.x >= 0 && newHead.x < BOARD_SIZE_X &&
             newHead.y >= 0 && newHead.y < BOARD_SIZE_Y);

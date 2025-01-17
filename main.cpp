@@ -56,6 +56,7 @@ int main(int argc, char** argv) {
 
     // Inicjalizacja gry
     Game game;
+    game.setState(MENU);
     bool quit = false;
     int t1 = SDL_GetTicks();
 
@@ -78,18 +79,18 @@ case SDL_KEYDOWN:
         case SDLK_ESCAPE:
             quit = true;  // Bezpośrednie wyjście z gry
             break;
-        case SDLK_RETURN:
-            if (game.getState() == MENU) {
-                game.reset();
-                game.setState(PLAYING);
-            }
-            break;
-        case SDLK_n:
-            if (game.getState() == GAME_OVER) {
-                game.reset();
-                game.setState(PLAYING);
-            }
-            break;
+       case SDLK_RETURN:
+    if (game.getState() == MENU) { // Rozpocznij grę z MENU
+        game.reset();
+        game.setState(PLAYING);
+    }
+    break;
+case SDLK_n:
+    if (game.getState() == GAME_OVER) { // Nowa gra po końcu
+        game.reset();
+        game.setState(PLAYING);
+    }
+    break;
                         case SDLK_UP:
                         case SDLK_DOWN:
                         case SDLK_LEFT:
@@ -116,25 +117,24 @@ case SDL_KEYDOWN:
         Renderer::DrawFrame(screen);
 
         // Rysowanie odpowiedniego ekranu w zależności od stanu gry
-        switch (game.getState()) {
-            case MENU:
-                Renderer::DrawMenu(screen, charset);
-                break;
-
-            case PLAYING:
-                Renderer::DrawBoard(screen, game.getSnake());
-                Renderer::DrawInfoPanel(screen, charset, game.getWorldTime(), game.getSnake());
-                Renderer::DrawFood(screen, game.getFood());
-                break;
-
-            case GAME_OVER:
-                Renderer::DrawBoard(screen, game.getSnake());
-                Renderer::DrawGameOver(screen, charset, game.getSnake(), game.getWorldTime());
-                if (game.shouldExitGameOver()) {
-                    game.setState(MENU);
-                }
-                break;
+       switch (game.getState()) {
+    case MENU:
+        Renderer::DrawMenu(screen, charset); // Wyświetl ekran startowy
+        break;
+    case PLAYING:
+        Renderer::DrawBoard(screen, game.getSnake());
+        Renderer::DrawInfoPanel(screen, charset, game.getGameTime(), game.getSnake());
+        Renderer::DrawFood(screen, game.getFood());
+        break;
+    case GAME_OVER:
+        Renderer::DrawBoard(screen, game.getSnake());
+        Renderer::DrawGameOver(screen, charset, game.getSnake(), game.getFinalTime());
+        if (game.shouldExitGameOver()) {
+            game.setState(MENU); // Powrót do menu
         }
+        break;
+}
+
 
         // Aktualizacja ekranu
         SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);

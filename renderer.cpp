@@ -106,10 +106,10 @@ void Renderer::DrawInfoPanel(SDL_Surface* screen, SDL_Surface* charset, double w
     sprintf(text, "Punkty: %d", snake.getScore());
     DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 40, text, charset);
     
-    DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 80, "Sterowanie:", charset);
-    DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 100, "Strzalki - ruch", charset);
-    DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 120, "N - nowa gra", charset);
-    DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 140, "ESC - wyjscie", charset);
+    DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 100, "Sterowanie:", charset);
+    DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 120, "Strzalki - ruch", charset);
+    DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 140, "N - nowa gra", charset);
+    DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 160, "ESC - wyjscie", charset);
 }
 
 
@@ -130,7 +130,7 @@ void Renderer::DrawMenu(SDL_Surface* screen, SDL_Surface* charset) {
                SCREEN_HEIGHT / 2 + 30, exitPrompt, charset);
 }
 
-void Renderer::DrawGameOver(SDL_Surface* screen, SDL_Surface* charset, const Snake& snake, double worldTime) {
+void Renderer::DrawGameOver(SDL_Surface* screen, SDL_Surface* charset, const Snake& snake, double finalTime) {
     // Czarne tło
     SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
     
@@ -141,7 +141,8 @@ void Renderer::DrawGameOver(SDL_Surface* screen, SDL_Surface* charset, const Sna
     const char* exitPrompt = "ESC - wyjscie";
     
     sprintf(scoreText, "Twoj wynik: %d punktow", snake.getScore());
-    sprintf(timeText, "Czas gry: %.1f sekund", worldTime);
+    sprintf(timeText, "Czas gry: %.1f sekund", finalTime);
+    
     
     // Białe napisy
     DrawString(screen, (SCREEN_WIDTH - strlen(gameOverText) * 8) / 2,

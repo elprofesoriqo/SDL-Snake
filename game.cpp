@@ -1,14 +1,14 @@
 #include "game.h"
 #include "constants.h"
 
-Game::Game() : state(MENU), worldTime(0), stateTimer(0), moveTimer(0), speedUpTimer(0) {
+Game::Game() : state(MENU), gameTime(0), stateTimer(0), moveTimer(0), speedUpTimer(0), finalTime(0) {
     reset();
 }
 
 void Game::reset() {
     snake.reset();
     food.reset();
-    worldTime = 0;
+    gameTime = 0;
     stateTimer = 0;
     moveTimer = 0;
     speedUpTimer = 0;
@@ -25,7 +25,7 @@ bool Game::shouldExitGameOver() const {
 }
 
 void Game::update(double delta) {
-    worldTime += delta;
+    gameTime += delta;
     stateTimer += delta;
     
     if (state == PLAYING) {
@@ -33,9 +33,9 @@ void Game::update(double delta) {
         speedUpTimer += delta;
         
         // Speed up every 20 seconds instead of 10
-        if (speedUpTimer >= 20.0) {
+        if (speedUpTimer >= 5.0) {
             speedUpTimer = 0;
-            moveTimer *= 0.9; // Increase speed by 10%
+            moveTimer *= 0.5; // Increase speed by 10%
         }
         
         // Update snake position
@@ -50,6 +50,7 @@ void Game::update(double delta) {
 
 void Game::updateGameLogic(double delta) {
     if (!snake.update()) {
+        finalTime = gameTime;  // Zapisz czas końca gry
         setState(GAME_OVER);
         return;
     }

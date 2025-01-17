@@ -8,10 +8,11 @@ private:
     GameState state;
     Snake snake;
     Food food;
-    double worldTime;
+    double gameTime;
     double stateTimer;
     double moveTimer;
     double speedUpTimer;
+    double finalTime;
 
 public:
     Game();
@@ -22,7 +23,9 @@ public:
     GameState getState() const { return state; }
     Snake& getSnake() { return snake; }
     Food& getFood() { return food; }
-    double getWorldTime() const { return worldTime; }
+    double getFinalTime() const { return finalTime; }
+    double getGameTime() const { return gameTime; }
     void setState(GameState newState);
     bool shouldExitGameOver() const;
+
 };
