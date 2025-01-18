@@ -23,11 +23,10 @@ void Game::setState(GameState newState) {
     stateTimer = 0;
 }
 
-//po 5 sekundach gra się zaczyna
+//wyświetlanie podsumowania gry
 bool Game::shouldExitGameOver() const {
-    return state == GAME_OVER && stateTimer >= 5.0;
+    return state == GAME_OVER && stateTimer >= GAME_OVER_DURATION;
 }
-
 
 //delata- czas który upłynał od ostatniej aktualizacji
 void Game::update(double delta) {
@@ -38,15 +37,13 @@ void Game::update(double delta) {
         moveTimer += delta;
         speedUpTimer += delta;
         
-        //przyśpieszanie gry co x sekund
-        if (speedUpTimer >= 10.0) {
+        if (speedUpTimer >= SPEED_INCREASE_INTERVAL) { //przyśpieszanie gry co x sekund
             speedUpTimer = 0;
-            speedMultiplier += 0.2; //zwiększanie o y
-
+            speedMultiplier += SPEED_INCREASE_AMOUNT;
         }
         
         //up pozycja snake'a
-        if (moveTimer >= 0.15 / speedMultiplier) { // Dzielimy bazowy czas ruchu przez mnożnik
+        if (moveTimer >= BASE_MOVE_DELAY / speedMultiplier) { //base czas ruchu * mnożnik
             moveTimer = 0;
             updateGameLogic(delta);
         }
@@ -56,6 +53,12 @@ void Game::update(double delta) {
 }
 
 void Game::updateGameLogic(double delta) {
+    //czy nie zajął całej planszy
+    if (snake.isFullBoard()) {
+        finalTime = gameTime;
+        setState(GAME_OVER);
+        return;
+    }
 
     //dotknięcie samego siebie
     if (!snake.update()) {
@@ -64,23 +67,28 @@ void Game::updateGameLogic(double delta) {
         return;
     }
 
-    //doktnięcie food
     Point head = snake.getBody()[0];
     
     if (head == food.getBlueFood()) {
-        snake.addScore(10); //+punkty
+        snake.addScore(BLUE_FOOD_SCORE);
         snake.grow();
+        //po zjedzeniu czy nie ma całej planszy
+        if (snake.isFullBoard()) {
+            finalTime = gameTime;
+            setState(GAME_OVER);
+            return;
+        }
         food.generateNewBlueFood();
     }
     
     if (food.isRedFoodActive() && head == food.getRedFood()) {
-        snake.addScore(20); //+punkty
+        snake.addScore(RED_FOOD_SCORE);
     
         //randomowe zmniejszanie o x || spowolanienie o y%
         if (food.getBonusType() == SHORTEN) {
-            snake.shrink(2); 
+            snake.shrink(SNAKE_SHRINK_AMOUNT);
         } else {
-            speedMultiplier *= 0.9;
+            speedMultiplier *= SPEED_DECREASE_FACTOR;
         }
     
         food.deactivateRedFood();

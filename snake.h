@@ -25,6 +25,5 @@ public:
     void addScore(int points);
     void grow();
     void shrink(int units);
-    
-
+    bool isFullBoard() const { return length >= BOARD_SIZE_X * BOARD_SIZE_Y;}
 };

@@ -7,27 +7,29 @@
 void Renderer::DrawString(SDL_Surface* screen, int x, int y, const char* text, SDL_Surface* charset) {
     int px, py, c;
     SDL_Rect s, d;
-    //litera ma wymiary 8x8 pikseli
-    s.w = 8;
-    s.h = 8;
-    d.w = 8;
-    d.h = 8;
+
+        //litera ma wymiary 8x8 pikseli
+    s.w = CHAR_WIDTH;
+    s.h = CHAR_HEIGHT;
+    d.w = CHAR_WIDTH;
+    d.h = CHAR_HEIGHT;
     while (*text) {
         c = *text & 255;
-        px = (c % 16) * 8;
-        py = (c / 16) * 8;
+        px = (c % 16) * CHAR_WIDTH;
+        py = (c / 16) * CHAR_HEIGHT;
         s.x = px;
         s.y = py;
         d.x = x;
         d.y = y;
         SDL_BlitSurface(charset, &s, screen, &d);
-        x += 8;
+        x += CHAR_WIDTH;
         text++;
     }
 }
+
 void Renderer::DrawFrame(SDL_Surface* screen) {
     SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
-        SDL_Rect boardArea = {
+    SDL_Rect boardArea = {
         BOARD_OFFSET_X - 1,
         BOARD_OFFSET_Y - 1,
         BOARD_SIZE_X * CELL_SIZE + 2,
@@ -35,7 +37,6 @@ void Renderer::DrawFrame(SDL_Surface* screen) {
     };
     SDL_FillRect(screen, &boardArea, SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF));
 }
-
 
 //plansza + snake
 void Renderer::DrawBoard(SDL_Surface* screen, const Snake& snake) {
@@ -51,7 +52,7 @@ void Renderer::DrawBoard(SDL_Surface* screen, const Snake& snake) {
     };
     SDL_FillRect(screen, &boardRect, white);
     
-    //ciało snake'a
+        //ciało snake'a
     const Point* snakeBody = snake.getBody();
     for (int i = 0; i < snake.getLength(); i++) {
         SDL_Rect snakeRect = {
@@ -112,7 +113,7 @@ void Renderer::DrawInfoPanel(SDL_Surface* screen, SDL_Surface* charset, double g
     DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 60, text, charset);
 
     if (food.isRedFoodActive()) {
-        sprintf(text, "Red food: %.1f s", 5.0 - food.getRedFoodTimer());
+        sprintf(text, "Red food: %.1f s", RED_FOOD_DURATION - food.getRedFoodTimer());
         DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 80, text, charset);
     }
     
@@ -127,10 +128,7 @@ void Renderer::DrawInfoPanel(SDL_Surface* screen, SDL_Surface* charset, double g
 
     DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 210, "Opcjonalne:", charset);
     DrawString(screen, INFO_PANEL_X + 10, BOARD_OFFSET_Y + 220, "A,B,C,D", charset);
-
-
 }
-
 
 void Renderer::DrawMenu(SDL_Surface* screen, SDL_Surface* charset) {
     SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
@@ -139,11 +137,11 @@ void Renderer::DrawMenu(SDL_Surface* screen, SDL_Surface* charset) {
     const char* startPrompt = "Nacisnij ENTER aby rozpoczac gre";
     const char* exitPrompt = "ESC - wyjscie";
     
-    DrawString(screen, (SCREEN_WIDTH - strlen(title) * 8) / 2,
+    DrawString(screen, (SCREEN_WIDTH - strlen(title) * CHAR_WIDTH) / 2,
                SCREEN_HEIGHT / 3, title, charset);
-    DrawString(screen, (SCREEN_WIDTH - strlen(startPrompt) * 8) / 2,
+    DrawString(screen, (SCREEN_WIDTH - strlen(startPrompt) * CHAR_WIDTH) / 2,
                SCREEN_HEIGHT / 2, startPrompt, charset);
-    DrawString(screen, (SCREEN_WIDTH - strlen(exitPrompt) * 8) / 2,
+    DrawString(screen, (SCREEN_WIDTH - strlen(exitPrompt) * CHAR_WIDTH) / 2,
                SCREEN_HEIGHT / 2 + 30, exitPrompt, charset);
 }
 
@@ -159,14 +157,14 @@ void Renderer::DrawGameOver(SDL_Surface* screen, SDL_Surface* charset, const Sna
     sprintf(scoreText, "Twoj wynik: %d punktow", snake.getScore());
     sprintf(timeText, "Czas gry: %.1f sekund", finalTime);
     
-        DrawString(screen, (SCREEN_WIDTH - strlen(gameOverText) * 8) / 2,
+    DrawString(screen, (SCREEN_WIDTH - strlen(gameOverText) * CHAR_WIDTH) / 2,
                SCREEN_HEIGHT / 3, gameOverText, charset);
-    DrawString(screen, (SCREEN_WIDTH - strlen(scoreText) * 8) / 2,
+    DrawString(screen, (SCREEN_WIDTH - strlen(scoreText) * CHAR_WIDTH) / 2,
                SCREEN_HEIGHT / 2, scoreText, charset);
-    DrawString(screen, (SCREEN_WIDTH - strlen(timeText) * 8) / 2,
+    DrawString(screen, (SCREEN_WIDTH - strlen(timeText) * CHAR_WIDTH) / 2,
                SCREEN_HEIGHT / 2 + 20, timeText, charset);
-    DrawString(screen, (SCREEN_WIDTH - strlen(restartPrompt) * 8) / 2,
+    DrawString(screen, (SCREEN_WIDTH - strlen(restartPrompt) * CHAR_WIDTH) / 2,
                SCREEN_HEIGHT / 2 + 50, restartPrompt, charset);
-    DrawString(screen, (SCREEN_WIDTH - strlen(exitPrompt) * 8) / 2,
+    DrawString(screen, (SCREEN_WIDTH - strlen(exitPrompt) * CHAR_WIDTH) / 2,
                SCREEN_HEIGHT / 2 + 70, exitPrompt, charset);
 }

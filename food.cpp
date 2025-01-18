@@ -15,36 +15,31 @@ void Food::reset() {
     redFoodCooldown = 0;
 }
 
-//pozycja dla blue food
+//pozycje food
 void Food::generateNewBlueFood() {
     blueFood.x = rand() % BOARD_SIZE_X;
     blueFood.y = rand() % BOARD_SIZE_Y;
 }
 
-//pozycja dla red food
 void Food::generateNewRedFood() {
     redFood.x = rand() % BOARD_SIZE_X;
     redFood.y = rand() % BOARD_SIZE_Y;
-    
-    //typ bonusu
-    currentBonus = (rand() % 2 == 0) ? SHORTEN : SLOW_DOWN;
-    
+    currentBonus = (rand() % 2 == 0) ? SHORTEN : SLOW_DOWN; //losowanie bonusu
     redFoodActive = true;
     redFoodTimer = 0;
 }
 
-
 void Food::update(double delta) {
     if (redFoodActive) {
         redFoodTimer += delta;
-        if (redFoodTimer >= 5.0) { //red food znika po x sekundach
+        if (redFoodTimer >= RED_FOOD_DURATION) { //red food znika po x sekundach
             redFoodActive = false;
             redFoodTimer = 0;
         }
     }
     else {
         redFoodCooldown += delta;
-        if (redFoodCooldown >= 20.0) { //pojawia się co y sekund
+        if (redFoodCooldown >= RED_FOOD_COOLDOWN) { //pojawia się co y sekund
             redFoodCooldown = 0;
             generateNewRedFood();
         }

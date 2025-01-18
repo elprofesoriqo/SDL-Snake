@@ -9,8 +9,10 @@ enum BonusType {
 
 class Food {
 private:
+    //pozycje
     Point blueFood;
     Point redFood;
+    
     bool redFoodActive;
     double redFoodTimer;
     double redFoodCooldown;

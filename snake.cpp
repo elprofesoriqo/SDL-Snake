@@ -6,8 +6,8 @@ Snake::Snake() {
 
 void Snake::reset() {
     length = INITIAL_SNAKE_LENGTH;
-    int startX = BOARD_SIZE_X / 2;
-    int startY = BOARD_SIZE_Y / 2;
+    int startX = SNAKE_START_X;
+    int startY = SNAKE_START_Y;
 
     for (int i = 0; i < length; i++) {
         body[i] = Point(startX - i, startY); //pozycja startowa
@@ -59,7 +59,7 @@ Direction Snake::getValidTurnDirection(const Point& pos) const {
     bool atBottomLeftCorner = atBottomWall && atLeftWall;
     bool atBottomRightCorner = atBottomWall && atRightWall;
 
-    //skręcanie w rogach
+    //kierunke w rogach
     if (atTopLeftCorner) {
         return (direction == UP) ? RIGHT : DOWN;
     }
@@ -106,8 +106,7 @@ void Snake::shrink(int units) {
 }
 
 bool Snake::update() {
-    //poprzedni direction
-    Direction previousDirection = direction;
+    Direction previousDirection = direction; //poprzedni direction
     direction = nextDirection;
     
     Point newHead = body[0];
@@ -120,12 +119,11 @@ bool Snake::update() {
         case RIGHT: newHead.x++; break;
     }
     
-    //kolizja w głową
+    //kolizja głową
     bool wallCollision = (newHead.x < 0 || newHead.x >= BOARD_SIZE_X ||
                          newHead.y < 0 || newHead.y >= BOARD_SIZE_Y);
     
     if (wallCollision) {
-        //poprzednia pozycja
         direction = previousDirection;
         newHead = body[0];
         
@@ -151,8 +149,8 @@ bool Snake::update() {
             return false;
         }
     }
-    
-    //aktualizacja snake'a
+
+    //up snake'a
     for (int i = length - 1; i > 0; i--) {
         body[i] = body[i - 1];
     }
@@ -160,3 +158,4 @@ bool Snake::update() {
     
     return true;
 }
+
