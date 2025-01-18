@@ -1,7 +1,7 @@
 #pragma once
 #include "types.h"
 
-// Dodaj ten enum na początku pliku
+//typy bonusów
 enum BonusType {
     SHORTEN,
     SLOW_DOWN
@@ -27,4 +27,5 @@ public:
     void generateNewRedFood();
     void deactivateRedFood() { redFoodActive = false; }
     BonusType getBonusType() const { return currentBonus; }
+    double getRedFoodTimer() const { return redFoodTimer; }
 };

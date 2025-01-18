@@ -1,19 +1,19 @@
 #pragma once
 #include "snake.h"
 #include "food.h"
-#include <SDL.h>  // Dodane
+#include <SDL.h>
 
 class Game {
 private:
     GameState state;
     Snake snake;
     Food food;
-    double gameTime;
+    double gameTime; //czas gry
     double stateTimer;
     double moveTimer;
     double speedUpTimer;
     double finalTime;
-
+    double speedMultiplier; //zwiększenie prędkości
 public:
     Game();
     void reset();
@@ -27,5 +27,5 @@ public:
     double getGameTime() const { return gameTime; }
     void setState(GameState newState);
     bool shouldExitGameOver() const;
-
+    double getSpeedMultiplier() const { return speedMultiplier; }
 };

@@ -10,7 +10,7 @@ void Snake::reset() {
     int startY = BOARD_SIZE_Y / 2;
 
     for (int i = 0; i < length; i++) {
-        body[i] = Point(startX - i, startY);
+        body[i] = Point(startX - i, startY); //pozycja startowa
     }
 
     direction = RIGHT;
@@ -22,13 +22,13 @@ void Snake::reset() {
 void Snake::setDirection(Direction newDir) {
     Point head = body[0];
 
-    // Sprawdź, czy wąż jest przy ścianie
+    //czy wąż jest przy ścianie
     bool atTopWall = head.y <= 0;
     bool atBottomWall = head.y >= BOARD_SIZE_Y - 1;
     bool atLeftWall = head.x <= 0;
     bool atRightWall = head.x >= BOARD_SIZE_X - 1;
 
-    // Ignoruj próby skrętu w ścianę
+    //ignorowanie skrętu w ścianę
     if ((atTopWall && newDir == UP) ||
         (atBottomWall && newDir == DOWN) ||
         (atLeftWall && newDir == LEFT) ||
@@ -36,7 +36,7 @@ void Snake::setDirection(Direction newDir) {
         return;
     }
 
-    // Sprawdź, czy nie zawracamy
+    //ignorowanie zawracania
     if ((direction == UP && newDir == DOWN) ||
         (direction == DOWN && newDir == UP) ||
         (direction == LEFT && newDir == RIGHT) ||
@@ -53,13 +53,13 @@ Direction Snake::getValidTurnDirection(const Point& pos) const {
     bool atLeftWall = pos.x <= 0;
     bool atRightWall = pos.x >= BOARD_SIZE_X - 1;
 
-    // Sprawdzanie rogów
+    //skeanie w rogach
     bool atTopLeftCorner = atTopWall && atLeftWall;
     bool atTopRightCorner = atTopWall && atRightWall;
     bool atBottomLeftCorner = atBottomWall && atLeftWall;
     bool atBottomRightCorner = atBottomWall && atRightWall;
 
-    // Obsługa rogów
+    //skręcanie w rogach
     if (atTopLeftCorner) {
         return (direction == UP) ? RIGHT : DOWN;
     }
@@ -73,7 +73,7 @@ Direction Snake::getValidTurnDirection(const Point& pos) const {
         return (direction == DOWN) ? LEFT : UP;
     }
 
-    // Obsługa zwykłych ścian
+    //skecanie w ściany
     if (atTopWall && direction == UP) return RIGHT;
     if (atBottomWall && direction == DOWN) return LEFT;
     if (atLeftWall && direction == LEFT) return UP;
@@ -81,11 +81,14 @@ Direction Snake::getValidTurnDirection(const Point& pos) const {
 
     return direction;
 }
+
+//czy w planszy?
 bool Snake::isValidMove(const Point& newHead) const {
     return (newHead.x >= 0 && newHead.x < BOARD_SIZE_X &&
             newHead.y >= 0 && newHead.y < BOARD_SIZE_Y);
 }
 
+//przedłużanie snake'a
 void Snake::grow() {
     if (length < MAX_SNAKE_LENGTH) {
         body[length] = body[length - 1];
@@ -97,18 +100,19 @@ void Snake::addScore(int points) {
     score += points;
 }
 
+//zmniejszanie
 void Snake::shrink(int units) {
     length = (length - units < INITIAL_SNAKE_LENGTH) ? INITIAL_SNAKE_LENGTH : length - units;
 }
 
 bool Snake::update() {
-    // Save previous direction before updating
+    //poprzedni direction
     Direction previousDirection = direction;
     direction = nextDirection;
     
     Point newHead = body[0];
     
-    // Calculate new position
+    //nowa pozycja głowy
     switch (direction) {
         case UP:    newHead.y--; break;
         case DOWN:  newHead.y++; break;
@@ -116,24 +120,22 @@ bool Snake::update() {
         case RIGHT: newHead.x++; break;
     }
     
-    // Check for wall collision
+    //kolizja w głową
     bool wallCollision = (newHead.x < 0 || newHead.x >= BOARD_SIZE_X ||
                          newHead.y < 0 || newHead.y >= BOARD_SIZE_Y);
     
     if (wallCollision) {
-        // Revert to previous direction and position
+        //poprzednia pozycja
         direction = previousDirection;
         newHead = body[0];
         
-        // Get valid turn direction
         Direction wallDirection = getValidTurnDirection(body[0]);
         
-        // Only update if the wall direction is different from current direction
         if (wallDirection != direction) {
             direction = wallDirection;
             nextDirection = wallDirection;
             
-            // Recalculate position with new direction
+            //obliczanie pozycji
             switch (direction) {
                 case UP:    newHead.y--; break;
                 case DOWN:  newHead.y++; break;
@@ -143,14 +145,14 @@ bool Snake::update() {
         }
     }
     
-    // Check self collision
+    //kolizja z ciałem
     for (int i = 0; i < length; i++) {
         if (newHead == body[i]) {
             return false;
         }
     }
     
-    // Update body
+    //aktualizacja snake'a
     for (int i = length - 1; i > 0; i--) {
         body[i] = body[i - 1];
     }
